@@ -2,17 +2,17 @@
  * Handler for ProductCreatedDomainEvent.
  *
  * <p>Processes the event after a product is successfully created.
- * Sends notification email to configured recipient.</p>
+ * Publishes event to message broker as a side effect.</p>
  */
 
 namespace BaseAppMessaging.Application.Features.V1.Products.EventHandlers;
 
+using System.Diagnostics;
 using Microsoft.Extensions.Logging;
 
-// using BaseAppMessaging.Application.Common.ApplicationServices.Email;
 using BaseAppMessaging.Application.Common.Messaging;
+using BaseAppMessaging.Application.Common.ApplicationServices.Messaging;
 using BaseAppMessaging.Domain.AggregatesModels.Products.Events;
-using BaseAppMessaging.Application.Features.V1.Products.Models;
 
 
 /// <summary>
@@ -21,27 +21,18 @@ using BaseAppMessaging.Application.Features.V1.Products.Models;
 public sealed class ProductCreatedDomainEventHandler : IDomainEventHandler<ProductCreatedDomainEvent>
 {
     private readonly ILogger<ProductCreatedDomainEventHandler> _logger;
-    // private readonly IMailService _mailService;
-    // private readonly IMailRequestFactory _mailRequestFactory;
-    // private readonly IEmailTemplateFactory _emailTemplateFactory;
-
-    private const string NotificationEmail = "nguyenduckien2508@gmail.com";
-    private const string TemplateName = "product-created";
+    private readonly IMessageSender<ProductCreatedDomainEvent> _messageSender;
 
     public ProductCreatedDomainEventHandler(
-        ILogger<ProductCreatedDomainEventHandler> logger)
-        // IMailService mailService,
-        // IMailRequestFactory mailRequestFactory,
-        // IEmailTemplateFactory emailTemplateFactory)
+        ILogger<ProductCreatedDomainEventHandler> logger,
+        IMessageSender<ProductCreatedDomainEvent> messageSender)
     {
         _logger = logger;
-        // _mailService = mailService;
-        // _mailRequestFactory = mailRequestFactory;
-        // _emailTemplateFactory = emailTemplateFactory;
+        _messageSender = messageSender;
     }
 
     /// <summary>
-    /// Sends notification email when a new product is created.
+    /// Publishes event to message broker when a new product is created.
     /// </summary>
     public async Task Handle(ProductCreatedDomainEvent notification, CancellationToken cancellationToken)
     {
@@ -52,35 +43,25 @@ public sealed class ProductCreatedDomainEventHandler : IDomainEventHandler<Produ
 
         try
         {
-            // // 1. Build email model
-            // var emailModel = new ProductCreatedEmailModel
-            // {
-            //     ProductName = notification.ProductName,
-            //     Price = notification.Price.ToString("C"),
-            //     CreatedAt = DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm:ss UTC")
-            // };
+            // Build metadata for tracing
+            var metaData = new MetaData
+            {
+                MessageId = Guid.NewGuid().ToString(),
+                ActivityId = Activity.Current?.Id,
+                CreationDateTime = DateTimeOffset.UtcNow
+            };
 
-            // // 2. Render template
-            // string emailBody = _emailTemplateFactory.GenerateEmailTemplate(TemplateName, emailModel);
-
-            // // 3. Build mail request using factory
-            // var mailRequest = _mailRequestFactory.Create(
-            //     to: NotificationEmail,
-            //     subject: $"[New Product] {notification.ProductName} has been created!",
-            //     body: emailBody
-            // );
-
-            // // 4. Send email
-            // await _mailService.SendAsync(mailRequest, cancellationToken);
+            // Publish to message broker
+            await _messageSender.SendAsync(notification, metaData, cancellationToken);
 
             _logger.LogInformation(
-                "[Domain Event] ProductCreated - Email sent to {Email}",
-                NotificationEmail);
+                "[Domain Event] ProductCreated - Published to broker | MessageId: {MessageId}",
+                metaData.MessageId);
         }
         catch (Exception ex)
         {
             _logger.LogError(ex,
-                "[Domain Event] ProductCreated - Failed to send email for product: {ProductName}",
+                "[Domain Event] ProductCreated - Failed to publish | Product: {ProductName}",
                 notification.ProductName);
         }
     }
