@@ -1,6 +1,6 @@
-using System.Diagnostics.CodeAnalysis;
-
 namespace BaseAppMessaging.Domain.Primitives;
+
+using System.Diagnostics.CodeAnalysis;
 
 /// <summary>
 /// Represents the outcome of an operation that can either succeed or fail.

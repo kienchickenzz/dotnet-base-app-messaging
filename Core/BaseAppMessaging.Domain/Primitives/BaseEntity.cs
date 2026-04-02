@@ -1,19 +1,7 @@
-using BaseAppMessaging.Domain.Abstractions;
-using BaseAppMessaging.Domain.Events;
-
 namespace BaseAppMessaging.Domain.Primitives;
 
-/// <summary>
-/// Marker interface for aggregate roots in the domain.
-/// </summary>
-/// <remarks>
-/// Aggregate roots are the entry points to aggregates and are the only entities
-/// that external objects can hold references to. They ensure consistency boundaries
-/// within the domain.
-/// </remarks>
-public interface IAggregateRoot
-{
-}
+using BaseAppMessaging.Domain.Abstractions;
+using BaseAppMessaging.Domain.Events;
 
 /// <summary>
 /// Base class for aggregate roots that can raise domain events.
@@ -22,7 +10,7 @@ public interface IAggregateRoot
 /// Aggregate roots encapsulate a cluster of domain objects and enforce invariants.
 /// They are responsible for raising domain events when significant state changes occur.
 /// </remarks>
-public abstract class AggregateRoot : Entity, IAggregateRoot, IHasDomainEvents
+public abstract class BaseEntity : Entity, IAggregateRoot, IHasDomainEvents
 {
     private readonly List<IDomainEvent> _domainEvents = new();
 

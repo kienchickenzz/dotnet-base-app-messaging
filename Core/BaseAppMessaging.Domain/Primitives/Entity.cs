@@ -1,6 +1,6 @@
-using BaseAppMessaging.Domain.Abstractions;
-
 namespace BaseAppMessaging.Domain.Primitives;
+
+using BaseAppMessaging.Domain.Abstractions;
 
 /// <summary>
 /// Base class for all domain entities.
