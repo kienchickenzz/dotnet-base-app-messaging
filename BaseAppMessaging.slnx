@@ -10,4 +10,7 @@
     <Folder Name="/Presentation/">
         <Project Path="Presentation/BaseAppMessaging.Api/BaseAppMessaging.Api.csproj" />
     </Folder>
+    <Folder Name="/Worker/">
+        <Project Path="Worker/BaseAppMessaging.Worker/BaseAppMessaging.Worker.csproj" />
+    </Folder>
 </Solution>

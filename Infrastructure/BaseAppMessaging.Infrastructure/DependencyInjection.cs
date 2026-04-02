@@ -21,6 +21,9 @@ using BaseAppMessaging.Infrastructure.Messaging.Fake;
 
 public static class DependencyInjection
 {
+    /// <summary>
+    /// Registers all Infrastructure services for API/Producer (includes Hangfire).
+    /// </summary>
     public static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration config)
     {
         services
@@ -28,6 +31,18 @@ public static class DependencyInjection
             ._AddBackgroundJobs(config)
             ._AddMessaging(config)
             ._AddServices();
+
+        return services;
+    }
+
+    /// <summary>
+    /// Registers Infrastructure services for Worker/Consumer (no Hangfire, no DB).
+    /// </summary>
+    public static IServiceCollection AddInfrastructureForWorker(this IServiceCollection services, IConfiguration config)
+    {
+        services
+            ._AddSettings(config)
+            ._AddMessaging(config);
 
         return services;
     }
