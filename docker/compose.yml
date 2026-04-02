@@ -1,0 +1,37 @@
+services:
+    db:
+        hostname: db
+        container_name: mssql_db
+        image: mcr.microsoft.com/mssql/server:2022-latest
+        restart: no
+        networks:
+        - server-net
+        ports:
+            - "1433:1433"
+        environment:
+            ACCEPT_EULA: "Y"
+            SA_PASSWORD: ${DB_PASSWORD}
+            MSSQL_PID: "Express"
+        volumes:
+            - ./volume/mssql:/var/opt/mssql
+
+    rabbitmq:
+        hostname: rabbitmq
+        container_name: rabbitmq_message_broker
+        image: rabbitmq:management
+        restart: no
+        networks:
+        - server-net
+        ports:
+        - "5672:5672"
+        - "15672:15672"
+        volumes:
+        - ./volume/rabbitmq:/var/lib/rabbitmq
+        environment:
+            RABBITMQ_DEFAULT_USER: ${DEFAULT_USER}
+            RABBITMQ_DEFAULT_PASS: ${DEFAULT_PASS}
+
+networks:
+    server-net:
+        driver: bridge
+        name: server-net

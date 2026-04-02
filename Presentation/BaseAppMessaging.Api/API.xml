@@ -1,0 +1,70 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>BaseAppMessaging.Api</name>
+    </assembly>
+    <members>
+        <member name="M:BaseAppMessaging.Api.Controllers.Features.V1.Products.ProductController.GetProductPaginated(BaseAppMessaging.Application.Features.V1.Products.Queries.GetProducts.GetProductsQuery)">
+            <summary>
+            Get the paginated product list
+            </summary>
+            <param name="request"></param>
+            <returns></returns>
+        </member>
+        <member name="M:BaseAppMessaging.Api.Controllers.Features.V1.Products.ProductController.GetProductById(System.Guid)">
+            <summary>
+            Get product by id
+            </summary>
+            <param name="id"></param>
+            <returns></returns>
+        </member>
+        <member name="M:BaseAppMessaging.Api.Controllers.Features.V1.Products.ProductController.CreateProduct(BaseAppMessaging.Application.Features.V1.Products.Commands.CreateProduct.CreateProductCommand)">
+            <summary>
+            Create product
+            </summary>
+            <param name="request"></param>
+            <returns></returns>
+        </member>
+        <member name="M:BaseAppMessaging.Api.Controllers.Features.V1.Products.ProductController.UpdateProduct(BaseAppMessaging.Application.Features.V1.Products.Commands.UpdateProduct.UpdateProductCommand)">
+            <summary>
+            Update product
+            </summary>
+            <param name="request"></param>
+            <returns></returns>
+        </member>
+        <member name="M:BaseAppMessaging.Api.Controllers.Features.V1.Products.ProductController.DeleteProduct(System.Guid)">
+            <summary>
+            Delete product
+            </summary>
+            <param name="id"></param>
+            <returns></returns>
+            <exception cref="T:BaseAppMessaging.Application.Common.Exceptions.BadRequestException"></exception>
+        </member>
+        <member name="M:BaseAppMessaging.Api.Controllers.Features.V1.Products.ProductController.CreateRandomProduct">
+            <summary>
+            Create a random product for testing outbox pattern
+            </summary>
+        </member>
+        <member name="T:BaseAppMessaging.Api.Extensions.SerilogExtensions">
+            <summary>
+            Extension methods for configuring Serilog logging.
+            </summary>
+        </member>
+        <member name="F:BaseAppMessaging.Api.Extensions.SerilogExtensions.DefaultSectionName">
+            <summary>
+            Default configuration section name for logger settings.
+            </summary>
+        </member>
+        <member name="M:BaseAppMessaging.Api.Extensions.SerilogExtensions.UseSerilogFromSettings(Microsoft.Extensions.Hosting.IHostBuilder,System.String)">
+            <summary>
+            Configures Serilog using settings from the specified configuration section.
+            </summary>
+            <param name="host">The host builder instance.</param>
+            <param name="sectionName">
+            The configuration section name containing Serilog settings.
+            Defaults to "LoggerSettings".
+            </param>
+            <returns>The configured host builder for chaining.</returns>
+        </member>
+    </members>
+</doc>
