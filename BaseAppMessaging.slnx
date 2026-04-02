@@ -1,0 +1,13 @@
+<Solution>
+  <Folder Name="/Core/">
+    <Project Path="Core/BaseAppMessaging.Application/BaseAppMessaging.Application.csproj" />
+    <Project Path="Core/BaseAppMessaging.Domain/BaseAppMessaging.Domain.csproj" />
+  </Folder>
+  <Folder Name="/Infrastructure/">
+    <Project Path="Infrastructure/BaseAppMessaging.Infrastructure/BaseAppMessaging.Infrastructure.csproj" />
+    <Project Path="Infrastructure/BaseAppMessaging.Persistence/BaseAppMessaging.Persistence.csproj" />
+  </Folder>
+  <Folder Name="/Presentation/">
+    <Project Path="Presentation/BaseAppMessaging.Api/BaseAppMessaging.Api.csproj" />
+  </Folder>
+</Solution>
