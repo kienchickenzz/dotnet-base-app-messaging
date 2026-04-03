@@ -8,7 +8,7 @@ using BaseAppMessaging.Application.Common.ApplicationServices.Messaging;
 /// No-op implementation of IMessageSender for testing and development.
 /// </summary>
 /// <typeparam name="T">The type of message payload.</typeparam>
-public class FakeSender<T> : IMessageSender<T>
+public class FakeSender<T> : IMessageSender<T> where T : class
 {
     private readonly ILogger<FakeSender<T>> _logger;
 

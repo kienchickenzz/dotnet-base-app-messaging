@@ -4,7 +4,7 @@ namespace BaseAppMessaging.Application.Common.ApplicationServices.Messaging;
 /// Defines a contract for sending messages to a message broker.
 /// </summary>
 /// <typeparam name="T">The type of message payload to send.</typeparam>
-public interface IMessageSender<T>
+public interface IMessageSender<T> where T : class
 {
     /// <summary>
     /// Sends a message asynchronously to the configured message broker.

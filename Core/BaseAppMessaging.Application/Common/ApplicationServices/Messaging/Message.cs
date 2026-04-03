@@ -7,7 +7,7 @@ using System.Text.Json;
 /// Generic wrapper for messages sent through the message broker.
 /// </summary>
 /// <typeparam name="T">The type of the message payload.</typeparam>
-public class Message<T>
+public class Message<T> where T : class
 {
     /// <summary>
     /// Gets or sets the message metadata for tracing and correlation.

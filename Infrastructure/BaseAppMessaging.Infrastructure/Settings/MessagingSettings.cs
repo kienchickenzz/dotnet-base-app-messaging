@@ -59,17 +59,12 @@ public class RabbitMQSettings
     /// <summary>
     /// RabbitMQ server hostname.
     /// </summary>
-    public string Host { get; set; } = "localhost";
-
-    /// <summary>
-    /// RabbitMQ server port.
-    /// </summary>
-    public int Port { get; set; } = 5672;
+    public string HostName { get; set; } = "localhost";
 
     /// <summary>
     /// Authentication username.
     /// </summary>
-    public string Username { get; set; } = "guest";
+    public string UserName { get; set; } = "guest";
 
     /// <summary>
     /// Authentication password.
@@ -77,19 +72,102 @@ public class RabbitMQSettings
     public string Password { get; set; } = "guest";
 
     /// <summary>
-    /// Virtual host name.
-    /// </summary>
-    public string VirtualHost { get; set; } = "/";
-
-    /// <summary>
     /// Exchange name for publishing messages.
     /// </summary>
-    public string Exchange { get; set; } = "base-app-messaging";
+    public string ExchangeName { get; set; } = "base-app-messaging";
 
     /// <summary>
-    /// Default queue name for consuming messages.
+    /// Routing keys for different message types.
+    /// Key: message type name, Value: routing key.
     /// </summary>
-    public string Queue { get; set; } = "default-queue";
+    public Dictionary<string, string>? RoutingKeys { get; set; }
+
+    /// <summary>
+    /// Consumer-specific configurations.
+    /// Key: consumer class name, Value: consumer settings.
+    /// </summary>
+    public Dictionary<string, ConsumerSettings>? Consumers { get; set; }
+
+    /// <summary>
+    /// Enable message encryption (AES-256).
+    /// </summary>
+    public bool MessageEncryptionEnabled { get; set; } = false;
+
+    /// <summary>
+    /// Base64-encoded encryption key for AES-256.
+    /// </summary>
+    public string? MessageEncryptionKey { get; set; }
+
+    /// <summary>
+    /// Gets the AMQP connection string.
+    /// </summary>
+    public string ConnectionString => $"amqp://{UserName}:{Password}@{HostName}/%2f";
+
+    /// <summary>
+    /// Gets the routing key for a message type.
+    /// </summary>
+    public string GetRoutingKey(string messageType, string defaultKey = "default")
+    {
+        if (RoutingKeys != null && RoutingKeys.TryGetValue(messageType, out var key))
+            return key;
+        return defaultKey;
+    }
+
+    /// <summary>
+    /// Gets consumer settings by consumer class name.
+    /// </summary>
+    public ConsumerSettings GetConsumerSettings(string consumerName)
+    {
+        if (Consumers != null && Consumers.TryGetValue(consumerName, out var settings))
+            return settings;
+        return new ConsumerSettings();
+    }
+}
+
+/// <summary>
+/// Consumer-specific settings for RabbitMQ receiver.
+/// </summary>
+public class ConsumerSettings
+{
+    /// <summary>
+    /// Queue name for this consumer.
+    /// </summary>
+    public string QueueName { get; set; } = "default-queue";
+
+    /// <summary>
+    /// Routing key to bind queue to exchange.
+    /// </summary>
+    public string RoutingKey { get; set; } = "#";
+
+    /// <summary>
+    /// Auto-create queue and bindings if not exist.
+    /// </summary>
+    public bool AutomaticCreateEnabled { get; set; } = true;
+
+    /// <summary>
+    /// Queue type: null (standard), "Quorum", or "Stream".
+    /// </summary>
+    public string? QueueType { get; set; }
+
+    /// <summary>
+    /// Enable single active consumer pattern (only one consumer processes at a time).
+    /// </summary>
+    public bool SingleActiveConsumer { get; set; } = false;
+
+    /// <summary>
+    /// Maximum retry attempts before sending to dead-letter queue.
+    /// </summary>
+    public int MaxRetryCount { get; set; } = 0;
+
+    /// <summary>
+    /// Retry intervals in seconds (e.g., [5, 30, 60]).
+    /// </summary>
+    public int[]? RetryIntervals { get; set; }
+
+    /// <summary>
+    /// Enable dead-letter queue for failed messages.
+    /// </summary>
+    public bool DeadLetterEnabled { get; set; } = false;
 }
 
 /// <summary>

@@ -9,7 +9,7 @@ using BaseAppMessaging.Application.Common.ApplicationServices.Messaging;
 /// </summary>
 /// <typeparam name="TConsumer">The consumer type.</typeparam>
 /// <typeparam name="T">The type of message payload.</typeparam>
-public class FakeReceiver<TConsumer, T> : IMessageReceiver<TConsumer, T>
+public class FakeReceiver<TConsumer, T> : IMessageReceiver<TConsumer, T> where T : class
 {
     private readonly ILogger<FakeReceiver<TConsumer, T>> _logger;
 

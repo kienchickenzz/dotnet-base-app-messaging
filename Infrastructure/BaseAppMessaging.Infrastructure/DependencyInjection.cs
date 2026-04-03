@@ -10,13 +10,16 @@ using Hangfire;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using RabbitMQ.Client;
 
 using BaseAppMessaging.Application.Common.ApplicationServices.BackgroundJob;
 using BaseAppMessaging.Application.Common.ApplicationServices.Messaging;
 using BaseAppMessaging.Infrastructure.Settings;
 using BaseAppMessaging.Infrastructure.BackgroundJobs;
 using BaseAppMessaging.Infrastructure.Messaging.Fake;
+using BaseAppMessaging.Infrastructure.Messaging.RabbitMQClient;
 
 
 public static class DependencyInjection
@@ -155,11 +158,52 @@ public static class DependencyInjection
     /// </summary>
     private static IServiceCollection _AddRabbitMQMessaging(this IServiceCollection services, RabbitMQSettings? settings)
     {
-        // TODO: Implement RabbitMQ provider
-        // services.AddSingleton(typeof(IMessageSender<>), typeof(RabbitMQSender<>));
-        // services.AddSingleton(typeof(IMessageReceiver<,>), typeof(RabbitMQReceiver<,>));
+        if (settings == null)
+            throw new ArgumentNullException(nameof(settings), "RabbitMQ settings are required when using RabbitMQ provider.");
 
-        throw new NotImplementedException("RabbitMQ provider not yet implemented. Use 'Fake' provider for development.");
+        // Register RabbitMQSettings for IOptions<RabbitMQSettings>
+        services.Configure<RabbitMQSettings>(opt =>
+        {
+            opt.HostName = settings.HostName;
+            opt.UserName = settings.UserName;
+            opt.Password = settings.Password;
+            opt.ExchangeName = settings.ExchangeName;
+            opt.RoutingKeys = settings.RoutingKeys;
+            opt.Consumers = settings.Consumers;
+            opt.MessageEncryptionEnabled = settings.MessageEncryptionEnabled;
+            opt.MessageEncryptionKey = settings.MessageEncryptionKey;
+        });
+
+        // Singleton RabbitMQ connection
+        services.AddSingleton<IConnection>(sp =>
+        {
+            var logger = sp.GetRequiredService<ILogger<IConnection>>();
+
+            var factory = new ConnectionFactory
+            {
+                HostName = settings.HostName,
+                UserName = settings.UserName,
+                Password = settings.Password,
+                AutomaticRecoveryEnabled = true
+            };
+
+            logger.LogInformation(
+                "[Messaging] Connecting to RabbitMQ | Host: {Host} | User: {User}",
+                settings.HostName,
+                settings.UserName);
+
+            var connection = factory.CreateConnectionAsync().GetAwaiter().GetResult();
+
+            logger.LogInformation("[Messaging] Connected to RabbitMQ successfully");
+
+            return connection;
+        });
+
+        // Register sender and receiver
+        services.AddSingleton(typeof(IMessageSender<>), typeof(RabbitMQSender<>));
+        services.AddSingleton(typeof(IMessageReceiver<,>), typeof(RabbitMQReceiver<,>));
+
+        return services;
     }
 
     /// <summary>

@@ -5,7 +5,7 @@ namespace BaseAppMessaging.Application.Common.ApplicationServices.Messaging;
 /// </summary>
 /// <typeparam name="TConsumer">The consumer type for routing/grouping purposes.</typeparam>
 /// <typeparam name="T">The type of message payload to receive.</typeparam>
-public interface IMessageReceiver<TConsumer, T>
+public interface IMessageReceiver<TConsumer, T> where T : class
 {
     /// <summary>
     /// Starts receiving messages and invokes the action for each received message.
