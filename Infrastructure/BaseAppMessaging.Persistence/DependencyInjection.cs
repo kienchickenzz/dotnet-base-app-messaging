@@ -4,6 +4,7 @@ using Microsoft.Extensions.Options;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
 
 using BaseAppMessaging.Persistence.Settings;
 using BaseAppMessaging.Application.Common.ApplicationServices.DataAccess;
@@ -70,5 +71,20 @@ public static class DependencyInjection
             "ProcessOutboxMessages",
             job => job.Execute(),
             $"*/{settings.IntervalInMinutes} * * * *");
+    }
+
+    /// <summary>
+    /// Adds Persistence health checks (database connectivity).
+    /// </summary>
+    /// <param name="builder">The health checks builder.</param>
+    /// <returns>The health checks builder for chaining.</returns>
+    public static IHealthChecksBuilder AddPersistenceHealthChecks(this IHealthChecksBuilder builder)
+    {
+        builder.AddCheck<ApplicationDbContextHealthCheck>(
+            name: "database",
+            failureStatus: HealthStatus.Unhealthy,
+            tags: new[] { "db", "sql" });
+
+        return builder;
     }
 }

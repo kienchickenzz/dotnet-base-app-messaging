@@ -10,6 +10,7 @@ using Hangfire;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using RabbitMQ.Client;
@@ -216,5 +217,37 @@ public static class DependencyInjection
         // services.AddSingleton(typeof(IMessageReceiver<,>), typeof(KafkaReceiver<,>));
 
         throw new NotImplementedException("Kafka provider not yet implemented. Use 'Fake' provider for development.");
+    }
+
+    /// <summary>
+    /// Adds Infrastructure health checks (RabbitMQ, Kafka based on provider).
+    /// </summary>
+    /// <param name="builder">The health checks builder.</param>
+    /// <param name="config">Application configuration.</param>
+    /// <returns>The health checks builder for chaining.</returns>
+    public static IHealthChecksBuilder AddInfrastructureHealthChecks(
+        this IHealthChecksBuilder builder,
+        IConfiguration config)
+    {
+        var settings = config
+            .GetSection(MessagingSettings.SectionName)
+            .Get<MessagingSettings>();
+
+        // Add health check based on messaging provider
+        if (settings?.Provider == MessagingProviderEnum.RabbitMQ)
+        {
+            builder.AddCheck<RabbitMQHealthCheck>(
+                name: "rabbitmq",
+                failureStatus: HealthStatus.Unhealthy,
+                tags: new[] { "messaging", "rabbitmq" });
+        }
+
+        // TODO: Add Kafka health check when implemented
+        // if (settings?.Provider == MessagingProviderEnum.Kafka)
+        // {
+        //     builder.AddCheck<KafkaHealthCheck>("kafka", tags: new[] { "messaging", "kafka" });
+        // }
+
+        return builder;
     }
 }

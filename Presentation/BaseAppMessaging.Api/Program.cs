@@ -25,6 +25,11 @@ builder.Services.AddApplication();
 builder.Services.AddInfrastructurePersistence(builder.Configuration);
 builder.Services.AddInfrastructure(builder.Configuration);
 
+// Health checks
+builder.Services.AddHealthChecks()
+    .AddPersistenceHealthChecks()
+    .AddInfrastructureHealthChecks(builder.Configuration);
+
 var app = builder.Build();
 
 // Initialize database (migrate + seed)
@@ -43,6 +48,7 @@ app.UseRouting();
 
 app.UseAuthorization();
 app.MapControllers();
+app.MapHealthChecksWithJsonResponse("/health");
 
 app.UseInfrastructure(builder.Configuration);
 

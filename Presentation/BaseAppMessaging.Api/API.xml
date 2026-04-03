@@ -45,6 +45,24 @@
             Create a random product for testing outbox pattern
             </summary>
         </member>
+        <member name="T:BaseAppMessaging.Api.Extensions.HealthCheckExtensions">
+            <summary>
+            Extension methods for health check configuration.
+            </summary>
+        </member>
+        <member name="M:BaseAppMessaging.Api.Extensions.HealthCheckExtensions.MapHealthChecksWithJsonResponse(Microsoft.AspNetCore.Builder.WebApplication,System.String)">
+            <summary>
+            Maps health check endpoint with detailed JSON response.
+            </summary>
+            <param name="app">The web application.</param>
+            <param name="path">The endpoint path (default: /health).</param>
+            <returns>The web application for chaining.</returns>
+        </member>
+        <member name="M:BaseAppMessaging.Api.Extensions.HealthCheckExtensions._WriteJsonResponse(Microsoft.AspNetCore.Http.HttpContext,Microsoft.Extensions.Diagnostics.HealthChecks.HealthReport)">
+            <summary>
+            Writes health check result as JSON response.
+            </summary>
+        </member>
         <member name="T:BaseAppMessaging.Api.Extensions.SerilogExtensions">
             <summary>
             Extension methods for configuring Serilog logging.
