@@ -15,6 +15,7 @@ using BaseAppMessaging.Application.Common.ApplicationServices.Messaging;
 using BaseAppMessaging.Infrastructure.Settings;
 
 
+// TODO: Triển khai Claim Check pattern - payload đẩy vào blob (minio,...) rồi gửi reference qua RabbitMQ
 /// <summary>
 /// RabbitMQ implementation of message sender.
 /// </summary>
